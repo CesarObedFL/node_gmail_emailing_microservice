@@ -50,18 +50,19 @@ function write_log(message) {
 }
 
 /**
- * GET /config
+ * GET /request/config
  * 
  * Returns public configuration of the service.
  * 
- * @route GET /config
+ * @route GET /request/config
  * @param {express.Request} req - Express request object
  * @param {express.Response} res - Express response object
  * @returns {void} JSON with configuration
  */
-app.get('/config', (req, res) => {
+app.get('/request/config', (req, res) => {
     res.json({
-        port: process.env.PORT
+        port: process.env.PORT,
+        server: 'emailing microservice'
     });
 });
 
