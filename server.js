@@ -61,7 +61,9 @@ function write_log(message) {
  */
 app.get('/request/config', (req, res) => {
     res.json({
-        port: process.env.PORT,
+        port: process.env.PORT || 3000,
+        sending_email: process.env.EMAIL || 'not set',
+        cors_url: process.env.CLIENT_URL || 'not set',
         server: 'emailing microservice'
     });
 });

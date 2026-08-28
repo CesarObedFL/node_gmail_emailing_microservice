@@ -160,13 +160,14 @@ describe('Email Microservice - Unit Tests', () => {
         });
     });
 
-    describe('GET /config', () => {
+    describe('GET /request/config', () => {
         test('should return configuration data', async () => {
-            const response = await request(app).get('/config');
+            const response = await request(app).get('/request/config');
             expect(response.status).toBe(200);
             expect(response.body).toHaveProperty('port');
             expect(response.body).toHaveProperty('sending_email');
             expect(response.body).toHaveProperty('cors_url');
+            expect(response.body).toHaveProperty('server');
         });
     });
 
