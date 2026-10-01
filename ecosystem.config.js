@@ -1,8 +1,8 @@
 module.exports = {
     apps: [
         {
-            name: 'node_emailing_service',
-            script: './index.js',
+            name: 'emailing_service',
+            script: './server.js',
             watch: true,
             env: {
                 NODE_ENV: 'production',
