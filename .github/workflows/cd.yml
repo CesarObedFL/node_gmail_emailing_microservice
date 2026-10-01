@@ -55,7 +55,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy files to VPS
         run: |
@@ -66,11 +66,11 @@ jobs:
             --exclude='coverage' \
             --exclude='logs.txt' \
             --exclude='.env' \
-            ./ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.REMOTE_TARGET }}/
+            ./ ${{ secrets.REMOTE_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_TARGET }}/
 
       - name: Install dependencies and restart PM2 on VPS
         run: |
-          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd ${{ secrets.REMOTE_TARGET }}
             pnpm install --prefer-frozen-lockfile --ignore-workspace
             pm2 restart email-microservice --update-env || pm2 start server.js --name email-microservice
