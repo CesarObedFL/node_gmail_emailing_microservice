@@ -66,12 +66,12 @@ jobs:
             --exclude='coverage' \
             --exclude='logs.txt' \
             --exclude='.env' \
-            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/www/var/node_gmail_emailing_microservice/
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/node_gmail_emailing_microservice/
 
       - name: Install dependencies and restart PM2 on VPS
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd /www/var/node_gmail_emailing_microservice/
+            cd /var/www/node_gmail_emailing_microservice/
             pnpm install --prefer-frozen-lockfile --ignore-workspace
             pm2 restart email-microservice --update-env || pm2 start server.js --name email-microservice
             pm2 save
