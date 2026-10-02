@@ -66,27 +66,14 @@ jobs:
             --exclude='coverage' \
             --exclude='logs.txt' \
             --exclude='.env' \
-            ./ ${{ secrets.REMOTE_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.REMOTE_TARGET }}/
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/www/var/node_gmail_emailing_microservice/
 
       - name: Install dependencies and restart PM2 on VPS
         run: |
-          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd ${{ secrets.REMOTE_TARGET }}
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /www/var/node_gmail_emailing_microservice/
             pnpm install --prefer-frozen-lockfile --ignore-workspace
             pm2 restart email-microservice --update-env || pm2 start server.js --name email-microservice
             pm2 save
             pm2 status
           EOF
-
-      - name: Notify Discord
-        if: always()
-        uses: sarisia/actions-status-discord@v1
-        with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          status: ${{ job.status }}
-          title: "🚀 Email Microservice Deployment"
-          description: |
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.sha }}
-            Deployed to: ${{ secrets.SSH_HOST }}
