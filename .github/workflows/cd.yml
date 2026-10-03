@@ -73,7 +73,7 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd /var/www/node_gmail_emailing_microservice/
             pnpm install --prefer-frozen-lockfile --ignore-workspace
-            pm2 restart email-microservice --update-env || pm2 start server.js --name email-microservice
+            pm2 restart emailing_microservice --update-env || pm2 start server.js --name emailing_microservice
             pm2 save
             pm2 status
           EOF
