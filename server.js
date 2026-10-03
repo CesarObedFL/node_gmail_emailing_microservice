@@ -30,9 +30,9 @@ app.use(cors({ origin: client_url }));
  * @var {nodemailer.Transporter}
  */
 const transporter = nodemailer.createTransport({
-    host: "smtp.hostinger.com",
+    host: 'smtp.gmail.com',
     port: 465,
-    secure: true,
+    secure: true, // true para puerto 465
     auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD
