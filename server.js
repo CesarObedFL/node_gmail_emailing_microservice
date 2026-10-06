@@ -156,6 +156,72 @@ app.post('/request', async (req, res) => {
     }
 });
 
+/**
+ * POST /notify
+ * Sends a transactional notification email on behalf of the owner.
+ * Requires a valid JWT with { verified: true, type: 'email_verification' }.
+ *
+ * Body:
+ * {
+ *   "to": "recipient@example.com",
+ *   "subject": "Payment confirmation",
+ *   "message": "Your payment was successful."
+ * }
+ */
+app.post('/notify', (req, res) => {
+
+    const auth_header = req.headers.authorization;
+    if (!auth_header || !auth_header.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Missing or invalid Authorization header' });
+    }
+
+    const token = auth_header.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (!decoded.verified || decoded.type !== 'email_verification') {
+            return res.status(403).json({ error: 'Invalid token payload' });
+        }
+    } catch (err) {
+        return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+
+    // 2. data body extracting
+    const { to, subject, message } = req.body;
+
+    if (!to || !subject || !message) {
+        return res.status(400).json({ error: 'Missing required fields: to, subject, message' });
+    }
+
+    // 3. Validar el formato del destinatario
+    const email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email_regex.test(to)) {
+        return res.status(400).json({ error: 'Invalid recipient email' });
+    }
+
+    // 4. send email to the destony
+    const mailOptions = {
+        from: email,
+        to: to,
+        subject: subject,
+        html: `
+            <html><body style="font-family: Arial, sans-serif; line-height: 1.6;">
+                ${message}
+                <hr>
+                <small>Este mensaje es automático, por favor no responder.</small>
+            </body></html>
+        `
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('❌ Error sending notification:', error.message);
+            return res.status(500).json({ error: 'Failed to send notification' });
+        }
+        console.log(`📧 Notification sent to ${to}`);
+        res.json({ success: 'Notification sent successfully' });
+    });
+});
+
 module.exports = app;
 
 if (require.main === module) {
