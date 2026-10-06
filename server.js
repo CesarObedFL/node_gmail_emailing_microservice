@@ -11,10 +11,10 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 const email = process.env.EMAIL;
 const email_password = process.env.EMAIL_PASSWORD;
-const jwt_secret = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
 const client_url = process.env.CLIENT_URL || process.env.URL;
 
-if (!jwt_secret) {
+if (!JWT_SECRET) {
     console.error('FATAL ERROR: JWT_SECRET is not defined in .env');
     process.exit(1);
 }
@@ -120,7 +120,7 @@ app.post('/request', async (req, res) => {
     // 3. JWT verification (sync with try/catch)
     let decoded;
     try {
-        decoded = jwt.verify(token, jwt_secret);
+        decoded = jwt.verify(token, JWT_SECRET);
     } catch (err) {
         write_log(`JWT verification failed - IP: ${client_ip} - Error: ${err.message}`);
         return res.status(401).json({ error: 'Invalid or expired token' });
